@@ -5,13 +5,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
+import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 
 fun Routing.configureTodoRouting() {
     val controller = TodoController()
-    route("/todo") {
+    route("/tasks") {
         get {
-            return@get call.respond(controller.todoList)
+            val response = call.respond(controller.todoList)
+            return@get response
+            
         }
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get
@@ -19,6 +22,12 @@ fun Routing.configureTodoRouting() {
                 return@get call.respond(it)
             }
             return@get call.respond(HttpStatusCode.NotFound, "Todo not found")
+        }
+        patch("/{id}/complete") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: return@patch call.respond(HttpStatusCode.BadRequest)
+            val completed = call.parameters["completed"]?.toBooleanStrictOrNull() ?: true
+            controller.completeTask(id, completed)
+            return@patch call.respond(HttpStatusCode.NoContent)
         }
     }
 }

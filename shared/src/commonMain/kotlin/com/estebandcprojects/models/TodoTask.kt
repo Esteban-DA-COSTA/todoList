@@ -7,4 +7,10 @@ import kotlin.js.JsExport
 @OptIn(ExperimentalJsExport::class)
 @JsExport
 @Serializable
-data class TodoTask(val id: Int, var title: String, var completed: Boolean = false)
+data class TodoTask(
+    val id: Int,
+    var title: String,
+    var description: String,
+    var completed: Boolean = false,
+    var dueDate: String? = null
+)

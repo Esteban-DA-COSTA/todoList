@@ -5,7 +5,7 @@ import com.estebandcprojects.models.TodoTask
 class TodoController() {
     private val _todoTaskList = mutableListOf<TodoTask>()
     val todoList get() = _todoTaskList.toList()
-
+    private var _lastId = 2
     init {
         _todoTaskList.addAll(
             listOf(
@@ -20,5 +20,16 @@ class TodoController() {
     fun completeTask(id: Int, completed: Boolean = true) {
         val task = getTodoById(id) ?: return
         task.completed = completed
+    }
+
+    fun deleteTask(id: Int) {
+        val task = getTodoById(id) ?: return
+        _todoTaskList.remove(task)
+    }
+
+    fun createTask(task: TodoTask): TodoTask {
+        val newTask = task.copy(id = ++_lastId)
+        _todoTaskList.add(newTask)
+        return newTask
     }
 }

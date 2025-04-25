@@ -1,38 +1,32 @@
 <script setup lang="ts">
 import {models} from "@/shared/todoList-shared.d";
 import {reactive} from "vue";
+import {taskStore} from "@/store/taskStore.ts";
 import TodoTask = models.TodoTask;
 
 const {task} = defineProps<{ task: TodoTask }>();
+
+const emit = defineEmits<{
+  deleteTask: [id: number],
+}>()
+
 const toast = useToast();
 const error: Partial<Toast> = reactive({
   title: "Something went wrong",
   description: "",
   color: "error",
 });
-
-async function toggleTask() {
-  await fetch(`http://127.0.0.1:8080/tasks/${task.id}/complete`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      completed: !task.completed
-    })
-  }).then(response => {
-    if (!response.ok) {
-      error.description = `${response.statusText}: ${response.status}`;
-      toast.add(error);
-    } else {
-      task.completed = !task.completed
-    }
-  })
-
-}
 </script>
 
 <template>
-  <UCard variant="outline" class="task" :class="{ 'completed': task.completed}" @click="toggleTask">
-    <template class="flex flex-col" #header>
-      <h1>{{ task.id }}. {{ task.title }}</h1>
+  <UCard :class="{ 'completed': task.completed}" class="task" variant="outline"
+         @click="taskStore.completeTask(task.id, !task.completed)">
+    <template #header>
+      <div class="flex flex-row">
+        <h1>{{ task.id }}. {{ task.title }}</h1>
+        <UButton class="absolute right-5" color="error" icon="material-symbols-light:close-rounded" variant="soft"
+                 @click.stop="taskStore.removeTask(task.id)"/>
+      </div>
     </template>
     {{ task.description }}
     <template #footer>
@@ -59,7 +53,7 @@ async function toggleTask() {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 10px;
   height: 100%;
   background-color: yellow;
 }

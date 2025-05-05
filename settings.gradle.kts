@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-include("api", "shared")
+include("api", "shared", "spring")

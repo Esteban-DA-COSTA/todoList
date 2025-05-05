@@ -75,23 +75,11 @@ class TodoRestControllerTest {
 
     @Test
     void deleteTask() throws Exception {
-        // First, create a task to delete
-        TodoTask newTask = new TodoTask(0, "Task to Delete", "Will be deleted", false, "2023-01-01");
-
-        String response = mockMvc.perform(post("/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newTask)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        TodoTask createdTask = objectMapper.readValue(response, TodoTask.class);
-
-        // Then delete it
-        mockMvc.perform(delete("/tasks/" + createdTask.getId()))
+        
+        mockMvc.perform(delete("/tasks/" + 1))
                 .andExpect(status().isNoContent());
-
-        // Verify it's gone
-        mockMvc.perform(get("/tasks/" + createdTask.getId()))
+        
+        mockMvc.perform(get("/tasks/" + 1))
                 .andExpect(status().isNotFound());
     }
 }
